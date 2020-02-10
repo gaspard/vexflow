@@ -158,6 +158,7 @@ export class TextNote extends Note {
 
     // Note properties
     this.text = text_struct.text;
+    this.text2 = text_struct.text2;
     this.superscript = text_struct.superscript;
     this.subscript = text_struct.subscript;
     this.glyph_type = text_struct.glyph;
@@ -268,17 +269,26 @@ export class TextNote extends Note {
       const height = ctx.measureText('M').width;
       // Get accurate width of text
       const width = ctx.measureText(this.text).width;
+      let scriptsWidth = 0;
 
       // Write superscript
       if (this.superscript) {
         ctx.setFont(this.font.family, this.font.size / 1.3, this.font.weight);
         ctx.fillText(this.superscript, x + width + 2, y - (height / 2.2));
+        scriptsWidth = ctx.measureText(this.superscript).width;
       }
 
       // Write subscript
       if (this.subscript) {
         ctx.setFont(this.font.family, this.font.size / 1.3, this.font.weight);
         ctx.fillText(this.subscript, x + width + 2, y + (height / 2.2) - 1);
+        scriptsWidth = Math.max(scriptsWidth, ctx.measureText(this.subscript).width);
+      }
+
+      // Write text after super/sub scripts
+      if (this.text2) {
+        ctx.setFont(this.font.family, this.font.size, this.font.weight);
+        ctx.fillText(this.text2, x + width + 2 + scriptsWidth + 6, y);
       }
 
       this.restoreStyle(ctx);
